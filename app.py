@@ -23,6 +23,30 @@ def health():
     return jsonify(status="ok"), 200
 
 
+@app.route("/health/db")
+def database_health():
+    connection = None
+    cursor = None
+
+    try:
+        connection = get_connection()
+        cursor = connection.cursor()
+        cursor.execute("SELECT 1")
+        cursor.fetchone()
+
+        return jsonify(status="ok", database="connected"), 200
+
+    except Exception:
+        app.logger.exception("Error comprobando la conexion a MySQL")
+        return jsonify(status="error", database="unavailable"), 503
+
+    finally:
+        if cursor is not None:
+            cursor.close()
+
+        if connection is not None and connection.is_connected():
+            connection.close()
+
 
 @app.route("/")
 def home():
