@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <main class="container">
+        <header class="header">
+            <div>
+                <p class="eyebrow">ORGANIZA TU DÍA</p>
+                <h1>Task Manager</h1>
+                <p class="subtitle">
+                    Convierte tus planes en resultados.
+                </p>
+            </div>
+            <div class="header-icon">✓</div>
+        </header>
+
+        <section class="stats">
+            <div class="stat-card">
+                <span class="stat-label">Total de tareas</span>
+                <span class="stat-number">{{ total }}</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Completadas</span>
+                <span class="stat-number">{{ completed }}</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Pendientes</span>
+                <span class="stat-number">{{ pending }}</span>
+            </div>
+        </section>
+
+        <section class="task-panel">
+            <h2>Mis tareas</h2>
+            <p class="panel-description">
+                Agrega las actividades que quieres completar.
+            </p>
+
+            <form class="task-form" action="{{ url_for('add_task') }}" method="POST">
+                <input type="text" name="title" placeholder="¿Qué necesitas hacer?" aria-label="Nombre de la tarea"
+                    maxlength="255" required>
+                <button type="submit">+ Agregar tarea</button>
+            </form>
+
+            <div class="task-list">
+                {% for task in tasks %}
+                <article class="task-item">
+                    <form action="{{ url_for('toggle_task', task_id=task.id) }}" method="POST">
+                        <button type="submit" class="complete-button" aria-label="Cambiar estado de la tarea"
+                            title="Cambiar estado">
+                            {{ '✓' if task.completed else '○' }}
+                        </button>
+                    </form>
+
+                    <div class="task-content">
+                        <span class="task-title
+                                {{ 'completed-task' if task.completed else '' }}">
+                            {{ task.title }}
+                        </span>
+                        <span class="task-status">
+                            {{ 'Completada' if task.completed else 'Pendiente' }}
+                        </span>
+                    </div>
+
+                    <form action="{{ url_for('delete_task', task_id=task.id) }}" method="POST"
+                        onsubmit="return confirm('¿Eliminar esta tarea?');">
+                        <button type="submit" class="delete-button" aria-label="Eliminar tarea" title="Eliminar tarea">
+                            Eliminar
+                        </button>
+                    </form>
+                </article>
+                {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">📝</div>
+                    <h3>Tu lista comienza aquí</h3>
+                    <p>
+                        Cuando agregues tareas, aparecerán en esta sección.
+                    </p>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <footer>
+            Task Manager · Organiza tu tiempo, alcanza tus metas.
+        </footer>
+    </main>
+</body>
+
+</html>
