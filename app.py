@@ -5,6 +5,25 @@ from db import get_connection
 app = Flask(__name__)
 
 
+from flask import (
+    Flask,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    jsonify,
+)
+from db import get_connection
+
+app = Flask(__name__)
+
+
+@app.route("/health")
+def health():
+    return jsonify(status="ok"), 200
+
+
+
 @app.route("/")
 def home():
     connection = get_connection()
